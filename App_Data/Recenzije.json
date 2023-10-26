@@ -1,0 +1,140 @@
+[
+  {
+    "Id": 0,
+    "Proizvod": {
+      "Id": 0,
+      "Naziv": "jabuka",
+      "Cena": null,
+      "Kolicina": 0,
+      "Opis": null,
+      "Slika": null,
+      "Datum_Postavljanja": "0001-01-01T00:00:00",
+      "Grad": null,
+      "Recenzija": null,
+      "Dostupnost": false,
+      "Obrisan": false
+    },
+    "Recezent": "vladan",
+    "Naslov": "aa",
+    "Sadrzaj_recenzije": "bb",
+    "Slika": "jabuka.jpg",
+    "ProizvodId": 0,
+    "Brisanje": 1,
+    "Odobreno": false
+  },
+  {
+    "Id": 1,
+    "Proizvod": {
+      "Id": 0,
+      "Naziv": "jabuka",
+      "Cena": null,
+      "Kolicina": 0,
+      "Opis": null,
+      "Slika": null,
+      "Datum_Postavljanja": "0001-01-01T00:00:00",
+      "Grad": null,
+      "Recenzija": null,
+      "Dostupnost": false,
+      "Obrisan": false
+    },
+    "Recezent": "vladan",
+    "Naslov": "asdf",
+    "Sadrzaj_recenzije": " dfgsf",
+    "Slika": "jabuka.jpg",
+    "ProizvodId": 0,
+    "Brisanje": 0,
+    "Odobreno": true
+  },
+  {
+    "Id": 2,
+    "Proizvod": {
+      "Id": 1,
+      "Naziv": "jabuka",
+      "Cena": null,
+      "Kolicina": 0,
+      "Opis": null,
+      "Slika": null,
+      "Datum_Postavljanja": "0001-01-01T00:00:00",
+      "Grad": null,
+      "Recenzija": null,
+      "Dostupnost": false,
+      "Obrisan": false
+    },
+    "Recezent": "vladan",
+    "Naslov": "komentar",
+    "Sadrzaj_recenzije": null,
+    "Slika": "jabuka.jpg",
+    "ProizvodId": 0,
+    "Brisanje": 1,
+    "Odobreno": false
+  },
+  {
+    "Id": 3,
+    "Proizvod": {
+      "Id": 1,
+      "Naziv": "jabuka",
+      "Cena": null,
+      "Kolicina": 0,
+      "Opis": null,
+      "Slika": null,
+      "Datum_Postavljanja": "0001-01-01T00:00:00",
+      "Grad": null,
+      "Recenzija": null,
+      "Dostupnost": false,
+      "Obrisan": false
+    },
+    "Recezent": "vladan",
+    "Naslov": "komenar",
+    "Sadrzaj_recenzije": "sadrzaj",
+    "Slika": "jabuka.jpg",
+    "ProizvodId": 0,
+    "Brisanje": 0,
+    "Odobreno": true
+  },
+  {
+    "Id": 4,
+    "Proizvod": {
+      "Id": 4,
+      "Naziv": "Lubenica",
+      "Cena": null,
+      "Kolicina": 0,
+      "Opis": null,
+      "Slika": null,
+      "Datum_Postavljanja": "0001-01-01T00:00:00",
+      "Grad": null,
+      "Recenzija": null,
+      "Dostupnost": false,
+      "Obrisan": false
+    },
+    "Recezent": "vladan",
+    "Naslov": "lubenica",
+    "Sadrzaj_recenzije": "lubenica",
+    "Slika": "jabuka.jpg",
+    "ProizvodId": 0,
+    "Brisanje": 0,
+    "Odobreno": true
+  },
+  {
+    "Id": 5,
+    "Proizvod": {
+      "Id": 2,
+      "Naziv": "Banana",
+      "Cena": null,
+      "Kolicina": 0,
+      "Opis": null,
+      "Slika": null,
+      "Datum_Postavljanja": "0001-01-01T00:00:00",
+      "Grad": null,
+      "Recenzija": null,
+      "Dostupnost": false,
+      "Obrisan": false
+    },
+    "Recezent": "vladan",
+    "Naslov": "banana22",
+    "Sadrzaj_recenzije": "banana",
+    "Slika": "banana.jpg",
+    "ProizvodId": 0,
+    "Brisanje": 0,
+    "Odobreno": true
+  }
+]

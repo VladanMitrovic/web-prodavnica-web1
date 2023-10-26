@@ -1,0 +1,128 @@
+[
+  {
+    "Id": 0,
+    "Proizvod": {
+      "Id": 0,
+      "Naziv": "jabuka",
+      "Cena": null,
+      "Kolicina": 0,
+      "Opis": null,
+      "Slika": null,
+      "Datum_Postavljanja": "0001-01-01T00:00:00",
+      "Grad": null,
+      "Recenzija": null,
+      "Dostupnost": false,
+      "Obrisan": false
+    },
+    "Kolicina": 6,
+    "Kupac": "vladan",
+    "Datum_Porudzbine": "2023-07-03T01:10:55.8721135+02:00",
+    "Status": 1,
+    "ObrisanaPor": false
+  },
+  {
+    "Id": 1,
+    "Proizvod": {
+      "Id": 1,
+      "Naziv": "jabuka",
+      "Cena": null,
+      "Kolicina": 0,
+      "Opis": null,
+      "Slika": null,
+      "Datum_Postavljanja": "0001-01-01T00:00:00",
+      "Grad": null,
+      "Recenzija": null,
+      "Dostupnost": false,
+      "Obrisan": false
+    },
+    "Kolicina": 2,
+    "Kupac": "vladan",
+    "Datum_Porudzbine": "2023-07-03T01:34:24.3727933+02:00",
+    "Status": 1,
+    "ObrisanaPor": false
+  },
+  {
+    "Id": 2,
+    "Proizvod": {
+      "Id": 1,
+      "Naziv": "jabuka",
+      "Cena": null,
+      "Kolicina": 0,
+      "Opis": null,
+      "Slika": null,
+      "Datum_Postavljanja": "0001-01-01T00:00:00",
+      "Grad": null,
+      "Recenzija": null,
+      "Dostupnost": false,
+      "Obrisan": false
+    },
+    "Kolicina": 1,
+    "Kupac": "vladan",
+    "Datum_Porudzbine": "2023-07-03T02:22:19.0242685+02:00",
+    "Status": 1,
+    "ObrisanaPor": false
+  },
+  {
+    "Id": 3,
+    "Proizvod": {
+      "Id": 4,
+      "Naziv": "Lubenica",
+      "Cena": null,
+      "Kolicina": 0,
+      "Opis": null,
+      "Slika": null,
+      "Datum_Postavljanja": "0001-01-01T00:00:00",
+      "Grad": null,
+      "Recenzija": null,
+      "Dostupnost": false,
+      "Obrisan": false
+    },
+    "Kolicina": 2,
+    "Kupac": "vladan",
+    "Datum_Porudzbine": "2023-07-03T11:00:07.3713866+02:00",
+    "Status": 1,
+    "ObrisanaPor": false
+  },
+  {
+    "Id": 4,
+    "Proizvod": {
+      "Id": 2,
+      "Naziv": "Banana",
+      "Cena": null,
+      "Kolicina": 0,
+      "Opis": null,
+      "Slika": null,
+      "Datum_Postavljanja": "0001-01-01T00:00:00",
+      "Grad": null,
+      "Recenzija": null,
+      "Dostupnost": false,
+      "Obrisan": false
+    },
+    "Kolicina": 3,
+    "Kupac": "vladan",
+    "Datum_Porudzbine": "2023-07-05T10:44:46.188829+02:00",
+    "Status": 1,
+    "ObrisanaPor": false
+  },
+  {
+    "Id": 5,
+    "Proizvod": {
+      "Id": 5,
+      "Naziv": "kormpir",
+      "Cena": null,
+      "Kolicina": 0,
+      "Opis": null,
+      "Slika": null,
+      "Datum_Postavljanja": "0001-01-01T00:00:00",
+      "Grad": null,
+      "Recenzija": null,
+      "Dostupnost": false,
+      "Obrisan": false
+    },
+    "Kolicina": 3,
+    "Kupac": "vladan",
+    "Datum_Porudzbine": "2023-07-05T10:45:01.6947471+02:00",
+    "Status": 1,
+    "ObrisanaPor": false
+  }
+]

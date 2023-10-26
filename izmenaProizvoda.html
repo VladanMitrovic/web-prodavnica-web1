@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="Scripts//jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            ucitajPodatkeProizvoda();
+
+            function ucitajPodatkeProizvoda() {
+                $.post("/api/izmena/GetProizvod", { 'Id': window.localStorage.getItem('izmeniProizvod').split('|')[0] }, function (data, status) {
+                    if (data.Id != null) {
+                        $('#id').val(data.Id);
+                        $('#naziv').val(data.Naziv);
+                        $('#cena').val(data.Cena);
+                        $('#kolicina').val(data.Kolicina);
+                        $('#grad').val(data.Grad);
+                        $('#opis').val(data.Opis);
+                        $('#slika').val(data.Slika);
+                    }
+                    else {
+                        alert('Korisnik nije admin/prodavac te ne moze videti ove podatke!');
+                        window.location.href = "index.html";
+                    }
+                });
+            }
+            //------------------------------------------
+
+            $('#formaIzmenaProizvoda').submit(function (event) {
+                let naziv = $('#naziv').val();
+                let cena = $('#cena').val();
+                let kolicina = $('#kolicina').val();
+                let grad = $('#grad').val();
+                let opis = $('#opis').val();
+                let id = $('#id').val();
+                //let slika = $('#slika').val();
+                event.preventDefault();
+
+                if (naziv.length === 0) {
+                    alert("Naziv nije uneto!");
+                    return;
+                }
+                if (cena < 0 || cena == null) {
+                    alert("Cena je nevalidna");
+                    return;
+                }
+                if (kolicina < 0 || kolicina == null) {
+                    alert("Kolicina je nevalidna");
+                    return;
+                }
+                if (grad.length === 0) {
+                    alert("Grad nije unet!");
+                    return;
+                }
+                if (opis.length === 0) {
+                    alert("Opis nije unet!");
+                    return;
+                }
+
+                $.post('/api/izmena/IzmenaProizvoda', { 'Id': id, 'Naziv': naziv, 'Cena': cena, 'Kolicina': kolicina, 'Grad': grad, 'Opis': opis },
+                    function (data, status) {
+                        if (data) {
+                            alert('Podaci izmenjeni!')
+                            let korisnik = window.localStorage.getItem('izmeniProizvod').split('|')[1];
+                            window.localStorage.removeItem('izmeniProizvod');
+                            if (korisnik == "prodavac") {
+                                window.location.href = "prodavac.html";
+                            }
+                            else if (korisnik == "admin") {
+                                window.location.href = "admin.html";
+                            }
+                        }
+                        else {
+                            alert('Izmena nije moguca');
+                        }
+                    });
+            });
+
+            $(document).on('click', '#backBtn', function () {
+                let korisnik = window.localStorage.getItem('izmeniProizvod').split('|')[1];
+                window.localStorage.removeItem('izmeniProizvod')
+                alert(korisnik)
+                if (korisnik == "prodavac") {
+                    window.location.href = "prodavac.html";
+                }
+                else if (korisnik == "admin") {
+                    window.location.href = "admin.html";
+                }
+               
+               
+            });
+        });
+    </script>
+</head>
+<body>
+    <h2>Izmena proizvoda:</h2>
+    <form id="formaIzmenaProizvoda">
+        <input type="text" id="id" hidden />
+        <div>
+            <label>Naziv:</label>
+            <input type="text" id="naziv" />
+        </div>
+        <div>
+            <label for="cena">Cena:</label>
+            <input type="number" id="cena" name="cena" />
+        </div>
+        <div>
+            <label for="kolicina">Kolicina:</label>
+            <input type="number" id="kolicina" name="kolicina" />
+        </div>
+        <div>
+            <label for="grad">Grad:</label>
+            <input type="text" id="grad" name="grad" />
+        </div>
+        <div>
+            <label for="opis">Opis:</label>
+            <textarea id="opis" name="opis" rows="4" cols="50">
+            </textarea>
+        </div>
+        <div>
+            <label for="slika">Slika:</label>
+            <input type="file" id="slika" name="slika"><br>
+        </div>
+        <div>
+            <input type="submit" id="izmenaProizvoda" value="Izmeni" />
+            <input type="button" id="backBtn" value="Nazad" />
+        </div>
+    </form>
+</body>
+</html>

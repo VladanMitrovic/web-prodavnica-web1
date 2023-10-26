@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="Scripts//jquery-3.4.1.js"></script>
+    <style>
+       
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="date"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input[type="submit"] {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            ucitajKorisnickePodatke();
+
+            function ucitajKorisnickePodatke() {
+                $.post("/api/izmena/GetKorisnik", { 'Korisnicko_Ime': window.localStorage.getItem('izmeniKorisnik') }, function (data, status) {
+                    if (data.Korisnicko_Ime != null) {
+                        $('#korisnickoIme').val(data.Korisnicko_Ime);
+                        $('#lozinka').val(data.Lozinka);
+                        $('#ime').val(data.Ime);
+                        $('#prezime').val(data.Prezime);
+                        if (data.Pol == 1) {
+                            $('#pol').val("1");
+                        }
+                        else {
+                            $('#pol').val("2");
+                        }
+                        $('#email').val(data.Email);
+                        
+                        $('#datumRodjenja').val(data.Datum_Rodjenja);
+                    }
+                    else {
+                        alert('Korisnik nije admin te ne moze videti ove podatke!');
+                        window.location.href = "index.html";
+                    }
+                });
+            }
+            //------------------------------------------
+
+            $('#formaZaIzmenu').submit(function (event) {
+                let korIme = $('#korisnickoIme').val();
+                let pass = $('#lozinka').val();
+                let ime = $('#ime').val();
+                let prz = $('#prezime').val();
+                let pol = $('#pol').val();
+                let mejl = $('#email').val();
+                let datRodj = $('#datumRodjenja').val();
+                event.preventDefault();
+
+                if (korIme.length === 0) {
+                    alert("Korisnicko ime nije uneto!");
+                    return;
+                }
+                if (pass.length === 0) {
+                    alert("Lozinka nije uneta!");
+                    return;
+                }
+                if (ime.length === 0) {
+                    alert("Ime nije uneto!");
+                    return;
+                }
+                if (prz.length === 0) {
+                    alert("Prezime nije uneto!");
+                    return;
+                }
+                if (pol == null) {
+                    alert("Pol nije unet!");
+                    return;
+                }
+                if (mejl.length === 0) {
+                    alert("Email adresa nije uneta!");
+                    return;
+                }
+
+                $.post('/api/izmena/IzmenaKorisnika', { 'Korisnicko_Ime': korIme, 'Lozinka': pass, 'Ime': ime, 'Pol': pol, 'Prezime': prz, 'Email': mejl, 'Datum_Rodjenja': datRodj },
+                    function (data, status) {
+                        if (data) {
+                            alert('Podaci izmenjeni!')
+                            window.localStorage.removeItem('izmeniKorisnik');
+                            window.location.href = "admin.html";
+                        }
+                        else {
+                            alert('Izmena nije moguca');
+                        }
+                    });
+            });
+
+            $(document).on('click', '#backBtn', function () { //brisanje korisnika kupac/prodavac
+                window.localStorage.removeItem('izmeniKorisnik')
+                window.location.href = "admin.html";
+            });
+        });
+    </script>
+</head>
+<body>
+    <h2>Izmena Korisnika:</h2>
+    <form id="formaZaIzmenu">
+        <div>
+            <label>Korisničko ime:</label>
+            <input type="text" id="korisnickoIme" disabled />
+        </div>
+        <div>
+            <label>Lozinka:</label>
+            <input type="password" id="lozinka" />
+        </div>
+        <div>
+            <label>Ime:</label>
+            <input type="text" id="ime" />
+        </div>
+        <div>
+            <label>Prezime:</label>
+            <input type="text" id="prezime" />
+        </div>
+        <div>
+            <label>Pol:</label>
+            <select id="pol">
+
+                <option value="1">Muški</option>
+                <option value="2">Ženski</option>
+            </select>
+        </div>
+        <div>
+            <label>Email:</label>
+            <input type="email" id="email" />
+        </div>
+        <div>
+            <label>Datum rodjenja:</label>
+            <input type="date" id="datumRodjenja" min="1967-01-01" max="2010-12-31" />
+        </div>
+        <div>
+            <input type="submit" id="registracija" value="Izmeni" />
+            <input type="button" id="backBtn" value="Nazad" />
+        </div>
+    </form>
+
+</body>
+</html>

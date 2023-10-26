@@ -1,0 +1,454 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+    <script src="Scripts//jquery-3.4.1.js"></script>
+    <style>
+        #formaRecenzija {
+            display: none;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        input[type="submit"] {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .btnIzvrsena,
+        .btnRecenzija,
+        .btnOdobri,
+        .btnDetalji,
+        #dodajRecenziju {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btnIzvrsena:hover,
+        .btnRecenzija:hover,
+        .btnOdobri:hover,
+        .btnDetalji:hover,
+        #dodajRecenziju:hover {
+            background-color: #45a049;
+        }
+
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            ucitajKupacPodatke();
+            ucitajPorudzbine();
+            ucitajRecenzije();
+            ucitajProizvodeKupca();
+
+
+            //Prikaz podataka o kupac korisniku
+            function ucitajKupacPodatke() {
+                $.post("/api/kupac/GetKupac", { 'Korisnicko_Ime': window.localStorage.getItem('userName') }, function (data, status) {
+                    if (data.Korisnicko_Ime != null && data.Uloga == 0) {
+                        $('#korisnickoIme').val(data.Korisnicko_Ime);
+                        $('#lozinka').val(data.Lozinka);
+                        $('#ime').val(data.Ime);
+                        $('#prezime').val(data.Prezime);
+                        if ($('#pol').val() == 0) {
+                            $('#pol').val("Musko");
+                        }
+                        else {
+                            $('#pol').val("Zensko");
+                        }
+                        $('#email').val(data.Email);
+                        $('#datumRodjenja').val(data.Datum_Rodjenja.split('T')[0]);
+                    }
+                    else {
+                        alert('Korisnik nije kupac te ne moze videti ove podatke!');
+                        window.location.href = "index.html";
+                    }
+                });
+            }
+            //------------------------------------------
+
+
+            //Izmena podataka o admin korisniku, dodati izmenu trenutnog korisnickog imena i pola
+            $('#formaProdavacProfil').submit(function (event) {
+                let korIme = $('#korisnickoIme').val();
+                let pass = $('#lozinka').val();
+                let ime = $('#ime').val();
+                let prz = $('#prezime').val();
+                let pol = $('#pol').val();
+                let mejl = $('#email').val();
+                let datRodj = $('#datumRodjenja').val();
+                event.preventDefault();
+
+                if (korIme.length === 0) {
+                    alert("Korisnicko ime nije uneto!");
+                    return;
+                }
+                if (pass.length === 0) {
+                    alert("Lozinka nije uneta!");
+                    return;
+                }
+                if (ime.length === 0) {
+                    alert("Ime nije uneto!");
+                    return;
+                }
+                if (prz.length === 0) {
+                    alert("Prezime nije uneto!");
+                    return;
+                }
+                if (pol.length === 0) {
+                    alert("Pol nije unet!");
+                    return;
+                }
+                if (mejl.length === 0) {
+                    alert("Email adresa nije uneta!");
+                    return;
+                }
+                if (datRodj.length === 0) {
+                    alert("Datum rodjenja nije unet!");
+                    return;
+                }
+
+                $.post('/api/kupac/IzmenaKupac', { 'Korisnicko_Ime': korIme, 'Lozinka': pass, 'Ime': ime, 'Pol': pol, 'Prezime': prz, 'Email': mejl, 'Datum_Rodjenja': datRodj },
+                    function (data, status) {
+                        if (data) {
+                            alert('Podaci izmenjeni!')
+                            window.location.href = "kupac.html";
+                        }
+                        else {
+                            alert('Izmena nije moguca');
+                        }
+                    });
+            });
+            //-----------------------------------------------------------
+
+            //Prikaz svh porudzbina koje korisnik ima
+            function ispisPorudzbine(data) {
+                let porudzbinaTabela = '<tr><th>Naziv proizvoda</th><th>Kolicina</th><th>Kupac</th><th>Datum narucivanja</th><th>Status</th><th></th></tr>';
+                for (element in data) {
+                    if (data[element].ObrisanaPor == false) {
+                        let datum = new Date(data[element].Datum_Porudzbine);
+                        let formattedDatum = ("0" + datum.getDate()).slice(-2) + "/"
+                            + ("0" + (datum.getMonth() + 1)).slice(-2) + "/"
+                            + datum.getFullYear();
+                        let status = "";
+
+                        switch (data[element].Status) {
+                            case 0:
+                                status = "Aktivna";
+                                break;
+                            case 1:
+                                status = "Izvrsena";
+                                break;
+                            case 2:
+                                status = "Otkazana";
+                                break;
+                            default:
+                                status = "Nepoznat";
+                                break;
+                        }
+
+                        let porudzbina = '<tr><td>' + data[element].Proizvod.Naziv + '</td>';
+                        porudzbina += '<td>' + data[element].Kolicina + '</td>';
+                        porudzbina += '<td>' + data[element].Kupac + '</td>';
+                        porudzbina += '<td>' + formattedDatum + '</td>';
+                        porudzbina += '<td>' + status + '</td>';
+                        if (status == "Aktivna") {
+                            porudzbina += '<td>' + '<input type="button" class="btnIzvrsena" name="' + data[element].Id + '" value="Izvrsi"/></td>';
+                        }
+                        else if (status == "Izvrsena") {
+                            porudzbina += '<td>' + '<input type="button" class="btnRecenzija" name="' + data[element].Proizvod.Id + '" value="Recenzija"/></td>';
+                        }
+                        porudzbina += '</tr>';
+
+                        porudzbinaTabela += porudzbina;
+                    }
+                    $('#porudzbinaTabela').html(porudzbinaTabela)
+                }
+            }
+
+            function ucitajPorudzbine() {
+                $.post("api/kupac/GetPorudzbine", { 'Kupac': window.localStorage.getItem('userName') }, function (data, status) {
+                    ispisPorudzbine(data);
+                });
+            }
+
+            //-----------------------------------------------------------
+
+            //Izmena statusa porudzbine
+            $(document).on('click', '.btnIzvrsena', function () {
+                let naziv = $(this).attr('name');
+
+
+                $.post("api/kupac/IzmenaIzvrsenaPorudzbina", { 'Id': naziv }, function (data) {
+
+                    window.location.href = "kupac.html";
+                });
+            });
+            //-----------------------------------------------------------
+
+            //Dodavanje nove recenzije
+            $(document).on('click', '.btnRecenzija', function () {
+                let naziv = $(this).attr('name');
+
+                let formaZaRecenziju = '<h2>Kreiranje recenzije</h2>';
+                formaZaRecenziju += '<form id="recenzijaForm"><input type="number" id="idProd" value="' + naziv + '" hidden />';
+                formaZaRecenziju += '<label for="naziv">Naslov</label > <input type="text" id="naslov" name="naslov" />';
+                formaZaRecenziju += '<label for="sadrzaj">Sadrzaj</label><textarea id="sadrzaj" name="sadrzaj" rows="4" cols="50"></textarea >';
+                formaZaRecenziju += '<input type="file" id="slika" name="slika"><br>';
+                formaZaRecenziju += '<input type="button" id="btnRecenzijaKreiranje" value="Kreiraj recenziju"/>'
+                formaZaRecenziju += '</form>';
+
+                $('#recenzijaDiv').html(formaZaRecenziju);
+
+                $(document).on('click', '#btnRecenzijaKreiranje', function () {
+                    let idProd = $('#idProd').val();
+                    let naslov = $('#naslov').val();
+                    let sadrzaj = $('#sadrzaj').val();
+
+                    if (naslov.length === 0) {
+                        alert("Naslov nije unet!");
+                        return;
+                    }
+
+                    if (sadrzaj.length === 0) {
+                        alert("Sadrzaj nije unet!");
+                        return;
+                    }
+                    var slikaInput = $("#slika");
+                    if (slikaInput[0].files.length === 0) {
+                        alert("Morate odabrati fajl!");
+                        return;
+                    }
+
+                    var formData = new FormData();
+                    formData.append("slika", $("#slika")[0].files[0]);
+
+                    $.post("api/kupac/DodajRecenziju", { 'Proizvod.Id': idProd, 'Slika': formData.get("slika").name, 'Sadrzaj_recenzije': sadrzaj, 'Naslov': naslov, 'Recezent': window.localStorage.getItem('userName') }, function (data) {
+                        if (data == false) {
+                            alert('Nije moguce naruciti tu kolicinu!')
+                            $('#recenzijaDiv').empty(); //brisanje forme za unos kolicine
+                            window.location.href = "kupac.html";
+                        }
+                        else {
+                            alert('Porudzbina uspesno kreirana!')
+                            $('#recenzijaDiv').empty();
+                            window.location.href = "kupac.html";
+                        }
+
+                    });
+
+                });
+
+            });
+            //-----------------------------------------------------------
+            //Prikazivanje svih recenzija
+            function ispisRecenzija(data) {
+                let recenzijeTabela = '<tr><th>Recenzent</th><th>Za proizvod</th><th>Naslov</th><th>Sadrzaj</th><th>Odobreno</th><th></th></tr>';
+                for (element in data) {
+                    if (data[element].Brisanje == 0) {
+                        let odobreno = "";
+                        if (data[element].Odobreno == true) {
+                            odobreno = "Odobreno";
+                        }
+                        else {
+                            odobreno = "Zahteva odobravanje"
+                        }
+                        let recenzija = '<tr><td>' + data[element].Recezent + '</td>';
+                        recenzija += '<td>' + data[element].Proizvod.Naziv + '</td>';
+                        recenzija += '<td>' + data[element].Naslov + '</td>';
+                        recenzija += '<td>' + data[element].Sadrzaj_recenzije + '</td>';
+                        recenzija += '<td>' + odobreno + '</td>';
+                        recenzija += '<td>' + '<input type="button" class="btnIzmenaRecenzije" name="' + data[element].Id + '" value="Izmena"/>';
+                        recenzija += '<input type="button" class="btnBrisanjeRecenzije" name="' + data[element].Id + '" value="Obrisi"/></td>';
+                        recenzija += '</tr>';
+
+                        recenzijeTabela += recenzija;
+                    }
+                }
+                $('#recenzijeTabela').html(recenzijeTabela)
+            }
+
+            function ucitajRecenzije() {
+                $.post("api/kupac/GetRecenzije", { 'Recezent': window.localStorage.getItem('userName') }, function (data, status) {
+                    ispisRecenzija(data);
+                });
+            }
+
+            $(document).on('click', '.btnOdobri', function () {
+                let naziv = $(this).attr('name');
+
+                $.post("api/admin/IzmeniRecenzijuOdobravanje", { 'Id': naziv }, function (data) {
+
+                    window.location.href = "admin.html";
+                });
+            });
+            //-----------------------------------------------------------
+            //Izmena recenzije
+            $(document).on('click', '.btnIzmenaRecenzije', function () { //brisanje korisnika kupac/prodavac
+                let id = $(this).attr('name');
+
+                window.localStorage.setItem('izmenaRecenzije', id);
+                window.location.href = 'izmenaRecenzije.html';
+            });
+            //-----------------------------------------------------------
+
+            //Brisanje recenzije
+            $(document).on('click', '.btnBrisanjeRecenzije', function () { //brisanje korisnika kupac/prodavac
+                let id = $(this).attr('name');
+
+                $.post("api/kupac/DeleteRecenzija", { 'Id': id }, function (data) {
+
+                    window.location.href = "kupac.html";
+                });
+            });
+            //-----------------------------------------------------------
+            //Prikazivanje omiljenih proizvoda
+            //Prikaz svih proizvoda nekog prodavca
+            function ispisProizvodiKupca(data) {
+                let proizvodiTabela = '<tr><th>Naziv proizvoda</th><th>Cena</th><th>Status</th></tr>';
+                for (element in data) {
+                    if (data[element].Obrisan != true) {
+                        let status = "";
+
+                        switch (data[element].Dostupnost) {
+                            case true:
+                                status = "Dostupan";
+                                break;
+                            case false:
+                                status = "Nedostupan";
+                                break;
+                            default:
+                                uloga = "Nepoznato";
+                                break;
+                        }
+
+                        let proizvod = '<tr><td>' + data[element].Naziv + '</td>';
+                        proizvod += '<td>' + data[element].Cena + '</td>';
+                        proizvod += '<td>' + status + '</td>';
+                        proizvod += '</tr>';
+
+                        proizvodiTabela += proizvod;
+                    }
+                }
+                $('#omiljeniProizvodiTabela').html(proizvodiTabela)
+            }
+
+            function ucitajProizvodeKupca() {
+                let naziv = window.localStorage.getItem('userName');
+                $.post("api/kupac/GetOmiljeniProizvodi", { 'Korisnicko_Ime': naziv }, function (data, status) {
+                    ispisProizvodiKupca(data);
+                });
+            }
+
+            //-----------------------------------------------------------
+
+            $(document).on('click', '#backBtn', function () {
+                window.location.href = "index.html";
+            });
+        });
+    </script>
+</head>
+<body>
+    <button id="backBtn">Nazad</button>
+    <h2>Profil kupca:</h2>
+    <form id="formaProdavacProfil">
+        <div>
+            <label>Korisnicko ime:</label>
+            <input type="text" id="korisnickoIme" readonly />
+        </div>
+        <div>
+            <label>Lozinka:</label>
+            <input type="password" id="lozinka" />
+        </div>
+        <div>
+            <label>Ime:</label>
+            <input type="text" id="ime" />
+        </div>
+        <div>
+            <label>Prezime:</label>
+            <input type="text" id="prezime" />
+        </div>
+        <div>
+            <label>Pol:</label>
+            <input type="text" id="pol" />
+        </div>
+        <div>
+            <label>Email:</label>
+            <input type="text" id="email" />
+        </div>
+        <div>
+            <label>Datum rodjenja:</label>
+            <input type="date" id="datumRodjenja" min="1967-01-01" max="2010-12-31" />
+        </div>
+        <div>
+            <input type="submit" id="izmenaKorisnika" value="Izmena" />
+        </div>
+    </form>
+    <h2>Sve porudzbine kupca:</h2>
+    <table id="porudzbinaTabela" border="1">
+    </table>
+    <h2>Sve recenzije kupca:</h2>
+    <table id="recenzijeTabela" border="1">
+    </table>
+    <h2>Omiljeni proizvodi kupca:</h2>
+    <table id="omiljeniProizvodiTabela" border="1">
+    </table>
+
+    <div id="recenzijaDiv">
+
+    </div>
+</body>
+</html>

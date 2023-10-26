@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="Scripts//jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            ucitajPodatkeRecenzije();
+
+            function ucitajPodatkeRecenzije() {
+                $.post("/api/izmena/GetRecenzija", { 'Id': window.localStorage.getItem('izmenaRecenzije') }, function (data, status) {
+                    if (data.Id != null) {
+                        $('#id').val(data.Id);
+                        $('#naslov').val(data.Naslov);
+                        $('#sadrzaj').val(data.Sadrzaj_recenzije);
+                        //$('#slika').val(data.Slika);
+                    }
+                    else {
+                        alert('Korisnik nije kupac te ne moze videti ove podatke!');
+                        window.location.href = "index.html";
+                    }
+                });
+            }
+            //------------------------------------------
+
+            $('#formaZaIzmenu').submit(function (event) {
+                let naslov = $('#naslov').val();
+                let sadrzaj = $('#sadrzaj').val();
+                let id = $('#id').val();
+                //let slika = $('#slika').val();
+                event.preventDefault();
+
+                if (naslov.length === 0) {
+                    alert("Naslov nije unet!");
+                    return;
+                }
+                if (sadrzaj.length === 0) {
+                    alert("Sadrzaj nije unet!");
+                    return;
+                }
+
+                $.post('/api/izmena/IzmenaRecenzije', { 'Id': id, 'Naslov': naslov, 'Sadrzaj_recenzije': sadrzaj},
+                    function (data, status) {
+                        if (data) {
+                            alert('Podaci izmenjeni!')
+                            window.localStorage.removeItem('izmenaRecenzije');
+                            window.location.href = "kupac.html";
+                        }
+                        else {
+                            alert('Izmena nije moguca');
+                        }
+                    });
+            });
+
+
+            $(document).on('click', '#backBtn', function () {
+                window.localStorage.removeItem('izmenaRecenzije')
+                window.location.href = "kupac.html";
+            });
+        });
+    </script>
+</head>
+<body>
+    <h2>Izmena Recenzije:</h2>
+    <form id="formaZaIzmenu">
+        <input type="text" id="id" hidden />
+        <div>
+            <label>Naslov:</label>
+            <input type="text" id="naslov" />
+        </div>
+        <div>
+            <label>Sadrzaj:</label>
+            <textarea id="sadrzaj" name="sadrzaj" rows="4" cols="50"></textarea>
+        </div>
+        <div>
+            <label>Slika:</label>
+            <input type="file" id="slika" name="slika">
+        </div>
+        <div>
+            <input type="submit" id="registracija" value="Izmeni" />
+            <input type="button" id="backBtn" value="Nazad" />
+        </div>
+    </form>
+
+</body>
+</html>

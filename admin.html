@@ -1,0 +1,896 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Web Shop</title>
+    <script src="Scripts//jquery-3.4.1.js"></script>
+    <style>
+        #korisnikTabela,
+        #proizvodiTabela,
+        #porudzbinaTabela,
+        #recenzijeTabela {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .btn,
+        .btnIzmeniProd,
+        .btnObrisiProd,
+        .btnDetalji,
+        .btnOdobri,
+        .btnIzmeni,
+        .btnObrisi
+        {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+            .btn:hover,
+            .btnIzmeniProd:hover,
+            .btnObrisiProd:hover,
+            .btnDetalji:hover,
+            .btnOdobri:hover,
+            .btnIzmeni:hover,
+            .btnObrisi:hover {
+                background-color: #45a049;
+            }
+        #formaAdminProfil,
+        #registrationForm {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        label {
+            
+            font-weight: bold;
+        }
+        #formaAdminProfil input[type="text"],
+        #formaAdminProfil input[type="password"],
+        #formaAdminProfil input[type="date"],
+        #registrationForm input[type="text"],
+        #registrationForm input[type="password"],
+        #registrationForm input[type="date"],
+        #registrationForm input[type="email"],
+        #formaAdminProfil select,
+        #registrationForm select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        #formaAdminProfil .btn {
+            width: 100%;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        #registrationForm {
+            background-color: #fff;
+            padding: 20px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+       
+        #registrationForm input[type="text"],
+        #registrationForm input[type="password"]
+        {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+        }
+
+        #registrationForm .btn {
+            width: 100%;
+        }
+        #sortiranjeKorisnik {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        #sortiranjeKorisnik div {
+                display: flex;
+                align-items: center;
+        }
+        #sortiranjeKorisnik input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        #sortiranjeKorisnik label {
+            cursor: pointer;
+        }
+        #pretragaForm {
+            display: compact;
+            gap: 10px;
+        }
+        #pretragaForm div {
+            display: flex;
+            align-items: center;
+        }
+        #pretragaForm label {
+            width: 100px;
+            text-align: right;
+            margin-right: 10px;
+        }
+        #pretragaForm input[type="text"],
+        #pretragaForm input[type="submit"] {
+            padding: 5px;
+        }
+            #pretragaForm input[type="submit"],
+            #formaAdminProfil input[type="submit"],
+            #registrationForm input[type="submit"]{
+               
+                padding: 5px 10px;
+                background-color: #4CAF50;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        #pretragaForm input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        #sortiranje{
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        #sortiranje div {
+             display: flex;
+             align-items: center;
+        }
+
+        #sortiranje input[type="checkbox"] {
+             margin-right: 5px;
+        }
+
+        #sortiranje label {
+            cursor: pointer;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            ucitajProdavacKupac();
+            ucitajAdminPodatke();
+            ucitajProizvode();
+            ucitajRecenzije();
+            ucitajPorudzbine();
+
+            //Prikaz svih kupaca/prodavaca u admin meniju
+            function ispisProdavacKupac(data) {
+                let korisnikTabela = '<tr><th>Korisnicko ime</th><th>Ime</th><th>Prezime</th><th>Godina rodjenja</th><th>Uloga</th><th></th></tr>';
+                for (element in data) {
+                    if (data[element].Obrisan != true) {
+                        let datum = new Date(data[element].Datum_Rodjenja);
+                        let formattedDatum = ("0" + datum.getDate()).slice(-2) + "/"
+                            + ("0" + (datum.getMonth() + 1)).slice(-2) + "/"
+                            + datum.getFullYear();
+                        let uloga = "";
+
+                        switch (data[element].Uloga) {
+                            case 0:
+                                uloga = "Kupac";
+                                break;
+                            case 1:
+                                uloga = "Prodavac";
+                                break;
+                            case 2:
+                                uloga = "Admin";
+                                break;
+                            default:
+                                uloga = "Nepoznato";
+                                break;
+                        }
+
+                        let korisnik = '<tr><td>' + data[element].Korisnicko_Ime + '</td>';
+                        korisnik += '<td>' + data[element].Ime + '</td>';
+                        korisnik += '<td>' + data[element].Prezime + '</td>';
+                        korisnik += '<td>' + formattedDatum + '</td>';
+                        korisnik += '<td>' + uloga + '</td>';
+                        korisnik += '<td>' + '<input type="button" class="btnIzmeni" name="' + data[element].Korisnicko_Ime + '" value="Izmeni"/>';
+                        korisnik += '<input type="button" class="btnObrisi" name="' + data[element].Korisnicko_Ime + '" value="Obrisi"/></td>';
+                        korisnik += '</tr>';
+
+                        korisnikTabela += korisnik;
+                    }
+                }
+                $('#korisnikTabela').html(korisnikTabela)
+            }
+
+            function ucitajProdavacKupac() {
+                $.get("api/admin/GetKorisnici", function (data, status) {
+                    ispisProdavacKupac(data);
+                });
+            }
+            //------------------------------------------
+
+            //Prikaz podataka o admin korisniku
+            function ucitajAdminPodatke() {
+                $.post("/api/admin/GetAdmin", { 'Korisnicko_Ime': window.localStorage.getItem('userName') }, function (data, status) {
+                    if (data.Korisnicko_Ime != null && data.Uloga == 2) {
+                        $('#korisnickoIme').val(data.Korisnicko_Ime);
+                        $('#lozinka').val(data.Lozinka);
+                        $('#ime2').val(data.Ime);
+                        $('#prezime2').val(data.Prezime);
+                        if ($('#pol').val() == 0) {
+                            $('#pol').val("Musko");
+                        }
+                        else {
+                            $('#pol').val("Zensko");
+                        }
+                        $('#email').val(data.Email);
+                        $('#datumRodjenja').val(data.Datum_Rodjenja.split('T')[0]);
+                    }
+                    else {
+                        alert('Korisnik nije admin te ne moze videti ove podatke!');
+                        window.location.href = "index.html";
+                    }
+                });
+            }
+            //------------------------------------------
+
+            //Izmena podataka o admin korisniku, dodati izmenu trenutnog korisnickog imena i pola
+            $('#formaAdminProfil').submit(function (event) {
+                let korIme = $('#korisnickoIme').val();
+                let pass = $('#lozinka').val();
+                let ime = $('#ime2').val();
+                let prz = $('#prezime2').val();
+                let pol = $('#pol').val();
+                let mejl = $('#email').val();
+                let datRodj = $('#datumRodjenja').val();
+                event.preventDefault();
+
+                if (korIme.length === 0) {
+                    alert("Korisnicko ime nije uneto!");
+                    return;
+                }
+                if (pass.length === 0) {
+                    alert("Lozinka nije uneta!");
+                    return;
+                }
+                if (ime.length === 0) {
+                    alert("Ime nije uneto!");
+                    return;
+                }
+                if (prz.length === 0) {
+                    alert("Prezime nije uneto!");
+                    return;
+                }
+                if (pol.length === 0) {
+                    alert("Pol nije unet!");
+                    return;
+                }
+                if (mejl.length === 0) {
+                    alert("Email adresa nije uneta!");
+                    return;
+                }
+                if (datRodj.length === 0) {
+                    alert("Datum rodjenja nije unet!");
+                    return;
+                }
+
+                $.post('/api/admin/IzmenaKorisnika', { 'Korisnicko_Ime': korIme, 'Lozinka': pass, 'Ime': ime, 'Pol': pol, 'Prezime': prz, 'Email': mejl, 'Datum_Rodjenja': datRodj },
+                    function (data, status) {
+                        if (data) {
+                            alert('Podaci izmenjeni!')
+                            window.location.href = "admin.html";
+                        }
+                        else {
+                            alert('Izmena nije moguca');
+                        }
+                    });
+            });
+            //-----------------------------------------------------------
+
+            //Prikazivanje svih proizvoda iz sistema
+            function ispisProizvodi(data) {
+                let proizvodTabela = '<tr><th>Naziv</th><th>Cena</th><th>Datum oglasavanja</th><th>Status</th></tr>';
+                for (element in data) {
+                    if (data[element].Obrisan != true) {
+                        let datum = new Date(data[element].Datum_Postavljanja);
+                        let formattedDatum = ("0" + datum.getDate()).slice(-2) + "/"
+                            + ("0" + (datum.getMonth() + 1)).slice(-2) + "/"
+                            + datum.getFullYear();
+                        let dostupan = "";
+
+                        switch (data[element].Dostupnost) {
+                            case true:
+                                dostupan = "Dostupan";
+                                break;
+                            case false:
+                                dostupan = "Nedostupan";
+                                break;
+                            default:
+                                dostupan = "Nepoznato";
+                                break;
+                        }
+                        if ($('#filtrirajDostupne').is(':checked') && data[element].Dostupnost === false) {
+                            continue; // Preskoči proizvod koji nije dostupan ako je filtriranje aktivirano
+                        }
+                        let proizvod = '<tr><td>' + data[element].Naziv + '</td>';
+                        proizvod += '<td>' + data[element].Cena + '</td>';
+                        proizvod += '<td>' + formattedDatum + '</td>';
+                        proizvod += '<td>' + dostupan + '</td>';
+                        proizvod += '<td>' + '<input type="button" class="btnIzmeniProd" name="' + data[element].Id + '" value="Izmeni"/>';
+                        proizvod += '<input type="button" class="btnObrisiProd" name="' + data[element].Id + '" value="Obrisi"/></td>';
+                        proizvod += '</tr>';
+
+                        proizvodTabela += proizvod;
+                    }
+                    $('#proizvodiTabela').html(proizvodTabela)
+                }
+            }
+
+            function ucitajProizvode() {
+                $.get("api/admin/GetProizvodi", function (data, status) {
+                    ispisProizvodi(data);
+                });
+            }
+            $('#filtrirajDostupne').change(function () {
+                ucitajProizvode(); // Ponovo učitaj proizvode kako bi se primenilo filtriranje
+            });
+
+
+                //-----------------------------------------------------------
+
+                //Logicko brisanje proizvoda i prodavaca (ne brise se stvarno iz fajla vec samo indikator neki)
+                $(document).on('click', '.btnObrisi', function () { //brisanje korisnika kupac/prodavac
+                    let naziv = $(this).attr('name');
+
+                    $.post("api/admin/DeleteKorisnik", { 'Korisnicko_Ime': naziv }, function (data) {
+
+                        window.location.href = "admin.html";
+                    });
+                });
+
+                $(document).on('click', '.btnObrisiProd', function () { //brisanje korisnika kupac/prodavac
+                    let id = $(this).attr('name');
+
+                    $.post("api/admin/DeleteProizvod", { 'Id': id }, function (data) {
+
+                        window.location.href = "admin.html";
+                    });
+                });
+
+                //-----------------------------------------------------------
+                //Izmena prodavaca/kupaca i proizvoda
+                $(document).on('click', '.btnIzmeni', function () { //brisanje korisnika kupac/prodavac
+                    alert("bilo sta");
+                    let korisnickoIme = $(this).attr('name');
+
+                    window.localStorage.setItem('izmeniKorisnik', korisnickoIme);
+                    window.location.href = 'izmenaKorisnik.html';
+                });
+
+                $(document).on('click', '.btnIzmeniProd', function () { //brisanje korisnika kupac/prodavac
+                    let id = $(this).attr('name');
+
+                    window.localStorage.setItem('izmeniProizvod', id + "|admin");
+                    window.location.href = 'izmenaProizvoda.html';
+                });
+                //----------------------------------------------------------
+                //Prikazivanje svih porudzbina iz sistema
+                function ispisPorudzbine(data) {
+                    let porudzbinaTabela = '<tr><th>Naziv proizvoda</th><th>Kolicina</th><th>Kupac</th><th>Datum narucivanja</th><th>Status</th><th></th></tr>';
+                    for (element in data) {
+                        if (data[element].ObrisanaPor == false) {
+                            let datum = new Date(data[element].Datum_Porudzbine);
+                            let formattedDatum = ("0" + datum.getDate()).slice(-2) + "/"
+                                + ("0" + (datum.getMonth() + 1)).slice(-2) + "/"
+                                + datum.getFullYear();
+                            let status = "";
+
+                            switch (data[element].Status) {
+                                case 0:
+                                    status = "Aktivna";
+                                    break;
+                                case 1:
+                                    status = "Izvrsena";
+                                    break;
+                                case 2:
+                                    status = "Otkazana";
+                                    break;
+                                default:
+                                    status = "Nepoznat";
+                                    break;
+                            }
+
+                            let porudzbina = '<tr><td>' + data[element].Proizvod.Naziv + '</td>';
+                            porudzbina += '<td>' + data[element].Kolicina + '</td>';
+                            porudzbina += '<td>' + data[element].Kupac + '</td>';
+                            porudzbina += '<td>' + formattedDatum + '</td>';
+                            porudzbina += '<td>' + status + '</td>';
+                            if (status == "Aktivna") {
+                                porudzbina += '<td>' + '<input type="button" class="btnIzvrsena" name="' + data[element].Id + '" value="Izvrsi"/>';
+                                porudzbina += '<input type="button" class="btnOtkazana" name="' + data[element].Id + '" value="Otkazi"/></td>';
+                            }
+                            porudzbina += '</tr>';
+
+                            porudzbinaTabela += porudzbina;
+                        }
+                        $('#porudzbinaTabela').html(porudzbinaTabela)
+                    }
+                }
+
+                function ucitajPorudzbine() {
+                    $.get("api/admin/GetPorudzbine", function (data, status) {
+                        ispisPorudzbine(data);
+                    });
+                }
+
+                $(document).on('click', '.btnIzvrsena', function () {
+                    let naziv = $(this).attr('name');
+
+
+                    $.post("api/admin/IzmenaIzvrsenaPorudzbina", { 'Id': naziv }, function (data) {
+
+                        window.location.href = "admin.html";
+                    });
+                });
+
+                $(document).on('click', '.btnOtkazana', function () {
+                    let naziv = $(this).attr('name');
+
+                    $.post("api/admin/IzmenaOtkazanaPorudzbina", { 'Id': naziv }, function (data) {
+
+                        window.location.href = "admin.html";
+                    });
+                });
+
+                //-----------------------------------------------------------
+
+
+            //Prikazivanje svih recenzija
+            function ispisRecenzija(data) {
+                let recenzijeTabela = '<tr><th>Recenzent</th><th>Za proizvod</th><th>Naslov</th><th>Sadrzaj</th><th>Odobreno</th><th></th></tr>';
+                for (element in data) {
+                    //*
+                    if (data[element].Brisanje == 0) {
+                        let odobreno = "";
+                        if (data[element].Odobreno == true) {
+                            odobreno = "Odobreno";
+                        }
+                        else {
+                            odobreno = "Zahteva odobravanje"
+                        }
+                        let recenzija = '<tr><td>' + data[element].Recezent + '</td>';
+                        recenzija += '<td>' + data[element].Proizvod.Naziv + '</td>';
+                        recenzija += '<td>' + data[element].Naslov + '</td>';
+                        recenzija += '<td>' + data[element].Sadrzaj_recenzije + '</td>';
+                        recenzija += '<td>' + odobreno + '</td>';
+
+                        if (data[element].Odobreno != true) {
+                            recenzija += '<td><input type="button" class="btnOdobri" name="' + data[element].Id + '" value="Odobri"/></td>';
+                        }
+                        recenzija += '</tr>';
+
+                        recenzijeTabela += recenzija;
+                    }
+                }
+                $('#recenzijeTabela').html(recenzijeTabela)
+            }
+
+            function ucitajRecenzije() {
+                $.get("api/admin/GetRecenzije", function (data, status) {
+                    ispisRecenzija(data);
+                });
+            }
+
+                $(document).on('click', '.btnOdobri', function () {
+                    let naziv = $(this).attr('name');
+
+                    $.post("api/admin/IzmeniRecenzijuOdobravanje", { 'Id': naziv }, function (data) {
+
+                        window.location.href = "admin.html";
+                    });
+                });
+
+                //-----------------------------------------------------------
+
+            //Dodavanje novog prodavca (brisanje odradjeno vec u delu sa svim korisnicima):
+            $('#registrationForm').submit(function (event) {
+                let korisnickoIme1 = $('#korisnickoIme1').val();
+                if (korisnickoIme.length === 0) {
+                    alert("Korisnicko ime nije uneto");
+                    return;
+                }
+                let ime1 = $('#ime1').val();
+                if (ime1.length === 0) {
+                    alert("Ime nije uneto");
+                    return;
+                }
+                let prezime1 = $('#prezime1').val();
+                if (prezime1.length === 0) {
+                    alert("Prezime nije uneto");
+                    return;
+                }
+                let lozinka1 = $('#lozinka1').val();
+                if (lozinka.length === 0) {
+                    alert("Lozinka nije uneta");
+                    return;
+                }
+                let email1 = $('#email1').val();
+                if (email.length === 0) {
+                    alert("Niste uneli email");
+                    return;
+                }
+
+                let datum1 = $('#datum1').val();
+
+                event.preventDefault();
+                var registrationData = {
+                    Korisnicko_Ime: korisnickoIme1,
+                    Ime: ime1,
+                    Prezime: prezime1,
+                    Datum_Rodjenja: datum1,
+                    Lozinka: lozinka1,
+                    Email: email1,
+                    Uloga: 1
+                };
+
+                alert()
+                $.post('api/admin/DodavanjeProdavca', registrationData, function (data, status) {
+                    if (data) {
+                        alert('Prodavac uspesno kreiran');
+                        window.location.href = "admin.html";
+                    }
+                    else {
+                        alert('Prodavac vec postoji');
+                    }
+                });
+            });
+
+            //-----------------------------------------------------------
+            //Pretrazi kupca
+            $('#pretragaForm').submit(function (event) {
+                alert('Pretraga');
+                let ime = $('#ime').val();
+                let prezime = $('#prezime').val();
+                let minDatum = $('#minDatum').val();
+                let maxDatum = $('#maxDatum').val();
+                let uloga = $('#uloga').val();
+                event.preventDefault();
+                if (ime.length === 0 && prezime.length === 0 && minDatum.length === 0 && maxDatum.length === 0 && uloga == 4) {
+                    alert('Niste uneli ni jedan parametar');
+                    return;
+                }
+                else if (minDatum.length !== 0 && maxDatum.length === 0) {
+                    alert('Nise uneli maksimalnu cenu');
+
+                }
+                else if (minDatum.length === 0 && maxDatum.length !== 0) {
+                    alert('Niste uneli minimalnu cenu');
+                }
+                var kriterijum = {
+                    Ime: ime,
+                    Prezime: prezime,
+                    MinDatum: minDatum,
+                    MaxDatum: maxDatum,
+                    Uloga: uloga
+                };
+                $.post("api/admin/pretraziKorisnika", kriterijum, function (data) {
+
+                    $('#ime').val('');
+                    $('#prezime').val('');
+                    $('#minDatum').val('');
+                    $('#maxDatum').val('');
+                    $('#uloga').val("4");
+                    //$('#uloga').val('');
+                    if (data.length === 0) {
+                        alert("Nije pronadjen kupac koji odgovara opisu");
+                        ucitajProdavacKupac();
+                        return;
+                    }
+                    alert("Nadjen kupac");
+                    ispisProdavacKupac(data);
+                });
+
+            });
+                //Sortiranje proizvoda
+                $('input[name = dugme]').change(function () {
+                    if ($('#sortRastuceNaziv').is(':checked')) {
+                        $.post("api/admin/sortiraj", { 'Sortiranje': 'RastuceNaziv' }, function (data) {
+                            ispisProizvodi(data);
+                        });
+                    }
+                    else if ($('#sortOpadajuceNaziv').is(':checked')) {
+                        $.post("api/admin/sortiraj", { 'Sortiranje': 'OpadajuceNaziv' }, function (data) {
+                            ispisProizvodi(data);
+                        });
+                    }
+                    else if ($('#sortRastuceCena').is(':checked')) {
+                        $.post("api/admin/sortiraj", { 'Sortiranje': 'RastuceCena' }, function (data) {
+                            ispisProizvodi(data);
+                        });
+                    }
+                    else if ($('#sortOpadajuceCena').is(':checked')) {
+                        $.post("api/admin/sortiraj", { 'Sortiranje': 'OpadajuceCena' }, function (data) {
+                            ispisProizvodi(data);
+                        });
+                    }
+                    else if ($('#sortRastuceDatum').is(':checked')) {
+                        $.post("api/admin/sortiraj", { 'Sortiranje': 'RastuceDatum' }, function (data) {
+                            ispisProizvodi(data);
+                        });
+                    }
+                    else if ($('#sortOpadajuceDatum').is(':checked')) {
+                        $.post("api/admin/sortiraj", { 'Sortiranje': 'OpadajuceDatum' }, function (data) {
+                            ispisProizvodi(data);
+                        });
+                    }
+                });
+                $(document).on('click', '#backBtn', function () {
+                    window.location.href = "index.html";
+                });
+                //-----------------------------------------------------------
+                //Sortiranje korisnika
+                $('input[name = dugme1]').change(function () {
+                    if ($('#sortRastuceNaziv1').is(':checked')) {
+                        $.post("api/admin/sortirajKorisnika", { 'Sortiranje': 'RastuceIme' }, function (data) {
+                            ispisProdavacKupac(data);
+                        });
+                    }
+                    else if ($('#sortOpadajuceNaziv1').is(':checked')) {
+                        $.post("api/admin/sortirajKorisnika", { 'Sortiranje': 'OpadajuceIme' }, function (data) {
+                            ispisProdavacKupac(data);
+                        });
+                    }
+                    else if ($('#sortRastuceDatum1').is(':checked')) {
+                        $.post("api/admin/sortirajKorisnika", { 'Sortiranje': 'RastuceDatumi' }, function (data) {
+                            ispisProdavacKupac(data);
+                        });
+                    }
+                    else if ($('#sortOpadajuceDatum1').is(':checked')) {
+                        $.post("api/admin/sortirajKorisnika", { 'Sortiranje': 'OpadajuceDatumi' }, function (data) {
+                            ispisProdavacKupac(data);
+                        });
+                    }
+                    else if ($('#sortOpadajuceKupac').is(':checked')) {
+                        $.post("api/admin/sortirajKorisnika", { 'Sortiranje': 'OpadajuceKupac' }, function (data) {
+                            ispisProdavacKupac(data);
+                        });
+                    }
+                    else if ($('#sortRastuceKupac').is(':checked')) {
+                        $.post("api/admin/sortirajKorisnika", { 'Sortiranje': 'RastuceKupac' }, function (data) {
+                            ispisProdavacKupac(data);
+                        });
+                    }
+                    else if ($('#sortRastuceProdavac').is(':checked')) {
+                        $.post("api/admin/sortirajKorisnika", { 'Sortiranje': 'RastuceProdavac' }, function (data) {
+                            ispisProdavacKupac(data);
+                        });
+                    }
+                    else if ($('#sortOpadajuceProdavac').is(':checked')) {
+                        $.post("api/admin/sortirajKorisnika", { 'Sortiranje': 'OpadajuceProdavac' }, function (data) {
+                            ispisProdavacKupac(data);
+                        });
+                    }
+                    else if ($('#sortOpadajuceAdmin').is(':checked')) {
+                        $.post("api/admin/sortirajKorisnika", { 'Sortiranje': 'OpadajuceAdmin' }, function (data) {
+                            ispisProdavacKupac(data);
+                        });
+                    }
+                    else if ($('#sortRastuceAdmin').is(':checked')) {
+                        $.post("api/admin/sortirajKorisnika", { 'Sortiranje': 'RastuceAdmin' }, function (data) {
+                            ispisProdavacKupac(data);
+                        });
+                    }
+                });
+            });
+       
+    </script>
+</head>
+<body>
+    <button id="backBtn">Nazad</button>
+    <h2>Profil admina:</h2>
+    <form id="formaAdminProfil">
+        <div>
+            <label>Korisnicko ime:</label>
+            <input type="text" id="korisnickoIme" readonly />
+        </div>
+        <div>
+            <label>Lozinka:</label>
+            <input type="password" id="lozinka" />
+        </div>
+        <div>
+            <label>Ime:</label>
+            <input type="text" id="ime2" />
+        </div>
+        <div>
+            <label>Prezime:</label>
+            <input type="text" id="prezime2" />
+        </div>
+        <div>
+            <label>Pol:</label>
+            <input type="text" id="pol" />
+        </div>
+        <div>
+            <label>Email:</label>
+            <input type="text" id="email" />
+        </div>
+        <div>
+            <label>Datum rodjenja:</label>
+            <input type="date" id="datumRodjenja" min="1967-01-01" max="2010-12-31" />
+        </div>
+        <div>
+            <input type="submit" id="izmenaKorisnika" value="Izmena" />
+        </div>
+    </form>
+    <h2>Prodavci/Kupci:</h2>
+    <table id="korisnikTabela" border="1">
+    </table>
+    <h2>Sortiranje Korisnika</h2>
+    <div id="sortiranjeKorisnik">
+        <div>
+            <input type="checkbox" id="sortRastuceNaziv1" checked="checked" name="dugme1" value="nazivRastuce">
+            <label for="sortRastuceNaziv1">Sortiraj po Imenu rastuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortOpadajuceNaziv1" name="dugme1" value="nazivOpadajuce">
+            <label for="sortOpadajuceNaziv1">Sortiraj po Imenu opadajuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortRastuceDatum1" name="dugme1" value="datumRastuce">
+            <label for="sortRastuceDatum1">Sortiraj po Datumu rastuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortOpadajuceDatum1" name="dugme1" value="datumOpadajuce">
+            <label for="sortOpadajuceDatum1">Sortiraj po Datumu opadajuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortRastuceKupac" name="dugme1" value="kupacRastuce">
+            <label for="sortRastuceKupac">Sortiraj po Kupcima rastuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortOpadajuceKupac" name="dugme1" value="kupacOpadajuce">
+            <label for="sortOpadajuceKupac">Sortiraj po Kupcima opadajuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortRastuceProdavac" name="dugme1" value="prodavacRastuce">
+            <label for="sortRastuceProdavac">Sortiraj po Prodavcima rastuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortOpadajuceProdavac" name="dugme1" value="prodavacOpadajuce">
+            <label for="sortOpadajuceProdavac">Sortiraj po Prodavcima opadajuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortRastuceAdmin" name="dugme1" value="adminRastuce">
+            <label for="sortRastuceAdmin">Sortiraj po Adminima rastuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortOpadajuceAdmin" name="dugme1" value="adminOpadajuce">
+            <label for="sortOpadajuceAdmin">Sortiraj po Adminima opadajuće</label>
+        </div>
+    </div>
+    <h2>Pretraga Korisnika</h2>
+    <form id="pretragaForm">
+        <div><label>Ime:</label> <input type="text" id="ime" /></div>
+        <div><label>Prezime:</label> <input type="text" id="prezime" /></div>
+        <div><label>Datum:</label> <input type="text" id="minDatum" /> <input type="text" id="maxDatum" /></div>
+        <div>
+            <label>Uloga:</label>
+            <select id="uloga">
+                <option value="4" selected></option>
+                <option value="0">Kupac</option>
+                <option value="1">Prodavac</option>
+            </select>
+        </div>
+        <input type="submit" value="Pretrazi" id="pretraziDugme" />
+    </form>
+    <h2>Svi proizvodi:</h2>
+    <table id="proizvodiTabela" border="1">
+    </table>
+    <h2>Sortiranje Proizvoda</h2>
+    <div id="sortiranje">
+        <div>
+            <input type="checkbox" id="sortRastuceNaziv" checked="checked" name="dugme" value="nazivRastuce">
+            <label for="sortRastuceNaziv">Sortiraj po Nazivu rastuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortOpadajuceNaziv" name="dugme" value="nazivOpadajuce">
+            <label for="sortOpadajuceNaziv">Sortiraj po Nazivu opadajuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortRastuceCena" name="dugme" value="cenaRastuce">
+            <label for="sortRastuceCena">Sortiraj po Ceni rastuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortOpadajuceCena" name="dugme" value="cenaOpadajuce">
+            <label for="sortOpadajuceCena">Sortiraj po Ceni opadajuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortRastuceDatum" name="dugme" value="datumRastuce">
+            <label for="sortRastuceDatum">Sortiraj po Datumu rastuće</label>
+        </div>
+        <div>
+            <input type="checkbox" id="sortOpadajuceDatum" name="dugme" value="datumOpadajuce">
+            <label for="sortOpadajuceDatum">Sortiraj po Datumu opadajuće</label>
+        </div>
+    </div>
+    <h3>Dostupnost:</h3>
+    <div>
+        <input type="checkbox" id="filtrirajDostupne" name="dugme" value="dostupni">
+        <label for="filtrirajDostupne">Filtriraj dostupne proizvode</label>
+    </div>
+
+    <h2>Sve recenzije:</h2>
+    <table id="recenzijeTabela" border="1">
+    </table>
+    <h2>Sve porudzbine:</h2>
+    <table id="porudzbinaTabela" border="1">
+    </table>
+
+
+    <h2>Dodavanje prodavca:</h2>
+    <form id="registrationForm">
+        <div>
+            <label>Korisničko ime:</label>
+            <input type="text" id="korisnickoIme1" />
+        </div>
+        <div>
+            <label>Lozinka:</label>
+            <input type="password" id="lozinka1" />
+        </div>
+        <div>
+            <label>Ime:</label>
+            <input type="text" id="ime1" />
+        </div>
+        <div>
+            <label>Prezime:</label>
+            <input type="text" id="prezime1" />
+        </div>
+        <div>
+            <label>Pol:</label>
+            <select id="pol1">
+
+                <option value="1">Muški</option>
+                <option value="2">Ženski</option>
+            </select>
+        </div>
+        <div>
+            <label>Email:</label>
+            <input type="email" id="email1" />
+        </div>
+        <div>
+            <label>Datum rodjenja:</label>
+            <input type="date" id="datum1" />
+        </div>
+        <div>
+            <input type="submit" id="registracija" value="Dodaj prodavca" />
+        </div>
+    </form>
+</body>
+</html>

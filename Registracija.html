@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Registracija</title>
+    <meta charset="utf-8" />
+    <script src="Scripts//jquery-3.4.1.js"></script>
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="date"], 
+        select{
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#registrationForm').submit(function (event) {
+                let korisnickoIme = $('#username').val();
+                if (korisnickoIme.length === 0) {
+                    alert("Korisnicko ime nije uneto");
+                    return;
+                }
+                let lozinka = $('#password').val();
+                if (lozinka.length === 0) {
+                    alert("Lozinka nije uneta");
+                    return;
+                }
+                let ime = $('#ime').val();
+                if (ime.length === 0) {
+                    alert("Ime nije uneto");
+                    return;
+                }
+                let prezime = $('#prezime').val();
+                if (prezime.length === 0) {
+                    alert("Prezime nije uneto");
+                    return;
+                }
+                let pol = $('#pol').val();
+                if (pol.length === 0)
+                {
+                    alert("Pol nije unet");
+                    return;
+                }
+                let email = $('#email').val();
+                if (email.length === 0) {
+                    alert("Niste uneli email");
+                    return;
+                }
+                let datum = $('#datum').val();
+                if (datum.length === 0) {
+                    alert("Niste uneli datum");
+                    return;
+                }
+                event.preventDefault();
+                var registrationData = {
+                    Korisnicko_Ime: korisnickoIme,
+                    Lozinka: lozinka,
+                    Ime: ime,
+                    Prezime: prezime,
+                    Pol: pol,
+                    Email: email,
+                    Datum_Rodjenja: datum
+                };
+                $.post('api/registracija/Registrovanje', registrationData, function (data, status) {
+                    if (data) {
+                        alert('Korisnik se uspesno registrovao');
+                        window.location.href = "index.html";
+                    }
+                    else {
+                        alert('Korisnik vec postoji');
+                    }
+                });
+            });
+        });
+    </script>
+</head >
+<body>
+    <h1>Registracija</h1>
+    <form id="registrationForm">
+        <div>
+            <label>Korisničko ime:</label>
+            <input type="text" id="username" />
+        </div>
+        <div>
+            <label>Lozinka:</label>
+            <input type="password" id="password" />
+        </div>
+        <div>
+            <label>Ime:</label>
+            <input type="text" id="ime" />
+        </div>
+        <div>
+            <label>Prezime:</label>
+            <input type="text" id="prezime" />
+        </div>
+        <div>
+            <label>Pol:</label>
+            <select id="pol">
+                
+                <option value="1">Muški</option>
+                <option value="2">Ženski</option>
+            </select>
+        </div>
+        <div>
+            <label>Email:</label>
+            <input type="email" id="email" />
+        </div>
+        <div>
+            <label>Datum rodjenja:</label>
+            <input type="date" id="datum" />
+        </div>
+        <div>
+            <input type="submit" id="registracija" value="Registracija" />
+        </div>
+    </form>
+    
+</body>
+</html>

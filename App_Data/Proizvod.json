@@ -1,0 +1,104 @@
+[
+  {
+    "Id": 0,
+    "Naziv": "jabuka",
+    "Cena": "4",
+    "Kolicina": 5,
+    "Opis": "            jabuka",
+    "Slika": "banana.jpg",
+    "Datum_Postavljanja": "2023-07-03T01:06:05.9324016+02:00",
+    "Grad": "Loznica",
+    "Recenzija": [
+      1,
+      0,
+      1
+    ],
+    "Dostupnost": true,
+    "Obrisan": false
+  },
+  {
+    "Id": 1,
+    "Naziv": "jabuka",
+    "Cena": "5",
+    "Kolicina": 2,
+    "Opis": "            jabuka",
+    "Slika": "jabuka.jpg",
+    "Datum_Postavljanja": "2023-07-03T01:09:07.0899881+02:00",
+    "Grad": "Loznica",
+    "Recenzija": [
+      2,
+      3
+    ],
+    "Dostupnost": true,
+    "Obrisan": true
+  },
+  {
+    "Id": 2,
+    "Naziv": "Banana",
+    "Cena": "10",
+    "Kolicina": 8,
+    "Opis": "            Banana",
+    "Slika": "banana.jpg",
+    "Datum_Postavljanja": "2023-07-03T02:25:59.8407392+02:00",
+    "Grad": "Novi Sad",
+    "Recenzija": [
+      5
+    ],
+    "Dostupnost": true,
+    "Obrisan": false
+  },
+  {
+    "Id": 3,
+    "Naziv": "Pomorandza",
+    "Cena": "3",
+    "Kolicina": 3,
+    "Opis": "            opis",
+    "Slika": "jabuka.jpg",
+    "Datum_Postavljanja": "2023-07-03T10:45:50.7581471+02:00",
+    "Grad": "Novi Sad",
+    "Recenzija": [],
+    "Dostupnost": true,
+    "Obrisan": true
+  },
+  {
+    "Id": 4,
+    "Naziv": "Lubenica",
+    "Cena": "6",
+    "Kolicina": 2,
+    "Opis": "            Lubenica",
+    "Slika": "jabuka.jpg",
+    "Datum_Postavljanja": "2023-07-03T10:59:42.524159+02:00",
+    "Grad": "Loznica",
+    "Recenzija": [
+      4
+    ],
+    "Dostupnost": true,
+    "Obrisan": true
+  },
+  {
+    "Id": 5,
+    "Naziv": "kormpir",
+    "Cena": "6",
+    "Kolicina": 1,
+    "Opis": "            krompir",
+    "Slika": "jabuka.jpg",
+    "Datum_Postavljanja": "2023-07-05T10:42:33.9409954+02:00",
+    "Grad": "Beograd",
+    "Recenzija": [],
+    "Dostupnost": true,
+    "Obrisan": false
+  },
+  {
+    "Id": 6,
+    "Naziv": "jasdkjfd",
+    "Cena": "3",
+    "Kolicina": 4,
+    "Opis": "            jasDH",
+    "Slika": "banana.jpg",
+    "Datum_Postavljanja": "2023-07-05T10:43:04.961825+02:00",
+    "Grad": "Novi Sad",
+    "Recenzija": [],
+    "Dostupnost": true,
+    "Obrisan": true
+  }
+]

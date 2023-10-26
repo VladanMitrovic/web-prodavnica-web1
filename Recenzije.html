@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="Scripts//jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            ucitajTabelu();
+
+            function ispisProizvoda(data) {
+                let tabelaProizvoda = '<table border="1">';
+                tabelaProizvoda += '<tr><th>Recezent</th><th>Naslov</th><th>Sadrzaj</th><th></th><th></th><th></th>'
+                for (element in data) {
+                    let ostaviRecenzijuBtn = '<button class="ostaviRecenziju" data-recenzija-id="' + data[element].ProizvodId + '">Ostavi recenziju</button>';
+                    let obrisiRecenzijuBtn = '<button class="obrisiRecenziju" data-recenzija-id="' + data[element].ProizvodId + '">Obrisi recenziju</button>';
+                    let izmeniRecenzijuBtn = '<button class="izmeniRecenziju" data-recenzija-id="' + data[element].ProizvodId + '">Izmeni recenziju</button>';
+                    let proizvodi = '<td>' + data[element].Recezent + '</td>';
+                    proizvodi += '<td>' + data[element].Naslov + '</td>';
+                    proizvodi += '<td>' + data[element].Sadrzaj_recenzije + '</td>';
+                    proizvodi += '<td>' + ostaviRecenzijuBtn + '</td>';
+                    proizvodi += '<td>' + obrisiRecenzijuBtn + '</td>';
+                    proizvodi += '<td>' + izmeniRecenzijuBtn + '</td>';
+                    tabelaProizvoda += '<tr>' + proizvodi + '</tr>';
+                }
+                tabelaProizvoda += '</table>'
+                $('#tabelaPodaci').html(tabelaProizvoda)
+            }
+            $(document).on('click', '.izmeniRecenziju', function () {
+                let proizvodId = $(this).data('recenzija-id');
+                prikaziFormuZaIzmenuRecenzije(proizvodId);
+            });
+            function prikaziFormuZaIzmenuRecenzije(proizvodId) {
+                let forma = '<form id="formaIzmenaRecenzije">';
+                forma += '<label for="korisnickoIme">Korisničko ime:</label>';
+                forma += '<input type="text" id="korisnickoIme" name="korisnickoIme" required><br><br>';
+                forma += '<label for="naslov">Naslov:</label>';
+                forma += '<input type="text" id="naslov" name="naslov"  required><br><br>';
+                forma += '<label for="sadrzaj">Sadrzaj Recenzije:</label>';
+                forma += '<input type="text" id="sadrzaj" name="sadrzaj"  required><br><br>';
+                forma += '<input type="submit" value="Potvrdi">';
+                forma += '</form>';
+
+                $('#tabelaPodaci').html(forma);
+
+                $(document).on('submit', '#formaIzmenaRecenzije', function (event) {
+                    event.preventDefault();
+                    let korisnickoIme = $('#korisnickoIme').val();
+                    let naslov = $('#naslov').val();
+                    let sadrzaj = $('#sadrzaj').val();
+
+
+                    izmeniRecenziju(proizvodId, korisnickoIme, naslov, sadrzaj);
+                });
+            }
+            function izmeniRecenziju(proizvodId, korisnickoIme, naslov, sadrzaj) {
+                $.post('api/kupac/IzmeniRecenziju', { ProizvodId: proizvodId, KorisnickoIme: korisnickoIme, Naslov: naslov, Sadrzaj: sadrzaj }, function (data) {
+                    if (data) {
+                        alert('Recenzija je izmenjena.');
+                        location.reload();
+                    } else {
+                        alert('Greška prilikom izmene recenzije.');
+                    }
+                });
+            }
+            $(document).on('click', '.obrisiRecenziju', function () {
+                let proizvodId = $(this).data('recenzija-id');
+                prikaziFormuZaBrisanjeRecenzije(proizvodId);
+            });
+            function prikaziFormuZaBrisanjeRecenzije(proizvodId) {
+                let forma = '<form id="formabrisanjaRecenzije">';
+                forma += '<label for="korisnickoIme">Korisničko ime:</label>';
+                forma += '<input type="text" id="korisnickoIme" name="korisnickoIme" required><br><br>';
+                forma += '<label for="naslov">Naslov:</label>';
+                forma += '<input type="text" id="naslov" name="naslov"  required><br><br>';
+                forma += '<input type="submit" value="Potvrdi">';
+                forma += '</form>';
+
+                $('#tabelaPodaci').html(forma);
+
+                $(document).on('submit', '#formabrisanjaRecenzije', function (event) {
+                    event.preventDefault();
+                    let korisnickoIme = $('#korisnickoIme').val();
+                    let naslov = $('#naslov').val();
+
+
+                    obrisiRecenziju(proizvodId, korisnickoIme, naslov);
+                });
+            }
+            function obrisiRecenziju(proizvodId, korisnickoIme, naslov) {
+                $.post('/api/kupac/ObrisiRecenziju', { ProizvodId: proizvodId, KorisnickoIme: korisnickoIme, Naslov: naslov}, function (data) {
+                    if (data) {
+                        alert('Recenzija je obrisana.');
+                        location.reload();
+                    } else {
+                        alert('Greška prilikom brisanja recenzije.');
+                    }
+                });
+            }
+            $(document).on('click', '.ostaviRecenziju', function () {
+                let proizvodId = $(this).data('recenzija-id');
+                prikaziFormuZaRecenziju(proizvodId);
+            });
+            function prikaziFormuZaRecenziju(proizvodId) {
+                let forma = '<form id="formaRecenzije">';
+                forma += '<label for="korisnickoIme">Korisničko ime:</label>';
+                forma += '<input type="text" id="korisnickoIme" name="korisnickoIme" required><br><br>';
+                forma += '<label for="naslov">Naslov:</label>';
+                forma += '<input type="text" id="naslov" name="naslov"  required><br><br>';
+                forma += '<label for="sadrzaj">Sadrzaj Recenzije:</label>';
+                forma += '<input type="text" id="sadrzaj" name="sadrzaj"  required><br><br>';
+                forma += '<input type="submit" value="Potvrdi">';
+                forma += '</form>';
+
+                $('#tabelaPodaci').html(forma);
+
+                $(document).on('submit', '#formaRecenzije', function (event) {
+                    event.preventDefault();
+                    let korisnickoIme = $('#korisnickoIme').val();
+                    let naslov = $('#naslov').val();
+                    let sadrzaj = $('#sadrzaj').val();
+
+                    ostaviRecenziju(proizvodId, korisnickoIme, naslov, sadrzaj);
+                });
+            }
+            function ostaviRecenziju(proizvodId, korisnickoIme, naslov, sadrzaj) {
+                $.post('/api/kupac/OstaviRecenziju', { ProizvodId: proizvodId, KorisnickoIme: korisnickoIme, Naslov: naslov, Sadrzaj: sadrzaj }, function (data) {
+                    if (data) {
+                        alert('Recenzija je postavljena.');
+                        location.reload();
+                    } else {
+                        alert('Greška prilikom ostavljanja recenzije.');
+                    }
+                });
+            }
+
+            function ucitajTabelu() {
+                $.get("api/kupac/ListaRecenzija", function (data, status) {
+
+                    ispisProizvoda(data);
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="tabelaPodaci"></div>
+</body>
+</html>

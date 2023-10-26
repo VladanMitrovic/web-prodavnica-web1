@@ -1,0 +1,16 @@
+[
+  {
+    "Proizvod": null,
+    "Kolicina": 2,
+    "Kupac": "Kupac 1",
+    "Datum_Porudzbine": "2023-06-29T10:15:00",
+    "Status": 1
+  },
+  {
+    "Proizvod": null,
+    "Kolicina": 1,
+    "Kupac": "Vladan_Mitrovic",
+    "Datum_Porudzbine": "0001-01-01T00:00:00",
+    "Status": 0
+  }
+]

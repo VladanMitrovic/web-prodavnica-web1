@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="Scripts//jquery-3.4.1.js"></script>
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#LogInForm').submit(function (event) {
+                let korisnickoIme = $('#username').val();
+                if (korisnickoIme.length === 0) {
+                    alert("Korisnicko ime nije uneto");
+                    return;
+                }
+                let lozinka = $('#password').val();
+                if (lozinka.length === 0) {
+                    alert("Lozinka nije uneta");
+                    return;
+                }
+
+                event.preventDefault();
+
+                var registrationData = {
+                    Korisnicko_Ime: korisnickoIme,
+                    Lozinka: lozinka,
+                };
+
+                $.post('api/logovanje/LogIn', registrationData, function (data, status) {
+                    if (data) {
+                        alert('Korisnik se uspesno ulogovao');
+                        window.localStorage.setItem("userName", registrationData.Korisnicko_Ime);
+                        //alert(window.localStorage.getItem("userName"))
+                        window.location.href = "index.html";
+                    }
+                    else {
+                        alert('Korisnik ne postoji');
+                        window.location.href = "index.html";
+                    }
+                });
+            });
+        });
+    </script>
+    <title></title>
+</head>
+<body>
+    <h1>Uloguj se</h1>
+    <form id="LogInForm">
+        <div>
+            <label>Korisničko ime:</label>
+            <input type="text" id="username" />
+        </div>
+        <div>
+            <label>Lozinka:</label>
+            <input type="password" id="password" />
+        </div>
+        <div>
+            <input type="submit" id="LogIn" value="LogIn" />
+        </div>
+    </form>
+</body>
+</html>
